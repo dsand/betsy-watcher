@@ -1,0 +1,58 @@
+
+Jeff Fookson's description of how to use the dataserver that automatically
+runs merge4k on the incoming extended FITS images from bigccd.
+
+Open an IRAF window as you normally would and run the script in the
+/home/bigobs/ directory that defines Mont4k ccd tasks, including
+merge4k and watcher, and loads the necessary iraf packages:
+
+  cl < mont4k.tasks
+
+Next, move to the directory where bigccd will be sending the files
+
+  cd /home/bigobs/<your.data.directory>
+
+Start the watcher by typing
+
+  watcher
+
+It will announce "watcher started".  Then it should just sit there and
+when an image as been transferred to kuiper (watcher checks every 2
+seconds for the file), it will announce "running merge4k on
+[filename]", where [filename] is the name of the just-transferred
+image.  Merge4k converts/combines the raw extended FITS images into a
+single normal FITS image, after first correcting each side for the
+crosstalk and for the overscan.  The original extended FITS image is
+saved in a subdirectory named "raw", and the converted image is renamed
+to be the same name in the original directory.
+
+When merge4k is done for that image, the watcher script will announce
+"done" and then it will start watching for the next image.  Watcher
+automatically changes the name of its window to "watcher" when it
+starts up, so you can minimize the window, as you do for the other
+background process windows (e.g. dataserver, galilserver), and easily
+find it again if you want to check on it.
+
+Use ctrl-C in the watcher window to stop the watcher.
+
+
+Watcher requires that the "postprocess" feature be enabled, or it
+won't work.  "postprocess" is automatically enabled when you execute
+the mont4k.tasks file, but if it gets turned off, then you will have
+to turn it back on before watcher will automatically use merge4k to
+convert your incoming images. postprocess works just like quicklook,
+i.e. typing its name in any window with no argument will simply tell
+you if it is enabled (on), or not (off).
+
+  postprocess
+
+To turn it on, type
+
+  postprocess on
+
+If you type, in any window,
+
+  postprocess off
+
+Then there will be no postprocessing with merge4k, regardless of whether
+watcher is running or not.
